@@ -14,7 +14,7 @@ public class AudioAnalyzer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void Refresh()
     {
         source.GetOutputData(samples, 0);
     }
