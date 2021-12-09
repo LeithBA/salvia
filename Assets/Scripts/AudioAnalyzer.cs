@@ -5,7 +5,8 @@ using UnityEngine;
 public class AudioAnalyzer : MonoBehaviour
 {
     private AudioSource source;
-    public float[] samples = new float[64];
+    public float[] samples = new float[8];
+
     // Start is called before the first frame update
     void Start()
     {

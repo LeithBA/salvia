@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Unity.Barracuda;
 
 public class BarracudaRunner : MonoBehaviour
 {
+    public UnityEvent onFinished;
     public NNModel neuralNetworkModel;
     public WorkerFactory.Type workerType = WorkerFactory.Type.Auto;
     public float waitTime = 10;
@@ -46,6 +48,7 @@ public class BarracudaRunner : MonoBehaviour
 
     public Texture2D baseTexture;
     public VideoCapture videoCapture;
+    public AudioAnalyzer audioAnalyzer;
     public Avatar avatar;
 
     private float[] heatMap3D;
@@ -90,9 +93,9 @@ public class BarracudaRunner : MonoBehaviour
 
     private IEnumerator Load()
     {
-        inputs[inputName1] = new Tensor(baseTexture);
-        inputs[inputName2] = new Tensor(baseTexture);
-        inputs[inputName3] = new Tensor(baseTexture);
+        inputs[inputName1] = new Tensor(baseTexture,3);
+        inputs[inputName2] = new Tensor(baseTexture,3);
+        inputs[inputName3] = new Tensor(baseTexture,3);
 
         // Create input and execute model.
         yield return worker.StartManualSchedule(inputs);
@@ -120,16 +123,17 @@ public class BarracudaRunner : MonoBehaviour
         videoCapture.Initialize(inputImageSize, inputImageSize);
 
         loaded = true;
+        onFinished.Invoke();
     }
 
     private void UpdateAvatar()
     {
-        input = new Tensor(videoCapture.renderTexture);
+        input = new Tensor(videoCapture.renderTexture,3);
         if( inputs[inputName1] == null )
         {
             inputs[inputName1] = input;
-            inputs[inputName2] = new Tensor(videoCapture.renderTexture);
-            inputs[inputName3] = new Tensor(videoCapture.renderTexture);
+            inputs[inputName2] = new Tensor(videoCapture.renderTexture,3);
+            inputs[inputName3] = new Tensor(videoCapture.renderTexture,3);
         }
         else
         {
